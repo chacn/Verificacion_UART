@@ -24,7 +24,7 @@ module UART
   bit [CeilLog2(WORD_LENGHT+1)-1:0] RX_count_wire;
   //-----------------RX shift register wires----------------
   bit RX_shift_register_enable_wire;
-  bit [CeilLog2(WORD_LENGHT+1)-1:0]RX_shift_register_out_wire;
+  bit [WORD_LENGHT+1:0]RX_shift_register_out_wire;
 
 //---------------------clk divider-------------------------
  Clk_Divider
@@ -78,7 +78,7 @@ Register
 
 
 //----------------------------Output signals--------------------------------
-assign received = 
+//assign received = 
 
 
-  endodule
+  endmodule
