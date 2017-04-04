@@ -1,4 +1,4 @@
-module UART_TX_TB;
+module UART_TB;
   localparam  WORD_LENGHT = 8;
    // Input Ports
   reg clk = 0;
@@ -6,12 +6,13 @@ module UART_TX_TB;
   reg send = 0;
   reg [WORD_LENGHT-1:0]value;
 
-  UART_TX
-  #(.WORD_LENGHT(WORD_LENGHT))      DUT
+  UART
+  #(.WORD_LENGHT(WORD_LENGHT), .FREQUENCY(10), .BAUDRATE(1))      DUT
   (
     //inputs
     .clk(clk),
     .rst(reset),
+    .Rx_in(1'b0),
     .Tx_in(value),
     .send(send),
     //outputs

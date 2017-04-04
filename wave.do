@@ -1,14 +1,15 @@
 onerror {resume}
 quietly WaveActivateNextPane {} 0
-add wave -noupdate /UART_TX_TB/DUT/clk
-add wave -noupdate /UART_TX_TB/DUT/rst
-add wave -noupdate /UART_TX_TB/DUT/Tx_in
-add wave -noupdate /UART_TX_TB/DUT/send
-add wave -noupdate /UART_TX_TB/DUT/Tx_out
-add wave -noupdate /UART_TX_TB/DUT/Tx_ready
 add wave -noupdate -divider Contador
-add wave -noupdate -radix unsigned /UART_TX_TB/DUT/TX_COUNTER/Counting
-add wave -noupdate /UART_TX_TB/DUT/TX_COUNTER/Flag
+add wave -noupdate /UART_TB/DUT/clk
+add wave -noupdate /UART_TB/DUT/rst
+add wave -noupdate /UART_TB/DUT/Rx_in
+add wave -noupdate /UART_TB/DUT/Tx_in
+add wave -noupdate /UART_TB/DUT/send
+add wave -noupdate /UART_TB/DUT/Rx_out
+add wave -noupdate /UART_TB/DUT/Tx_out
+add wave -noupdate /UART_TB/DUT/new_Rx
+add wave -noupdate /UART_TB/DUT/Tx_ready
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {21 ps} 0}
 quietly wave cursor active 1
@@ -26,4 +27,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ps
 update
-WaveRestoreZoom {0 ps} {84 ps}
+WaveRestoreZoom {21 ps} {105 ps}

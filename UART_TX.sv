@@ -61,6 +61,6 @@ module UART_TX
 
   //-------------------------output assignments-------------------------------
   assign Tx_ready = ~|Tx_shift_register_shift_wire;
-  assign Tx_out = Tx_ready | Tx_shift_register_out_wire[0];
+  assign Tx_out = Tx_shift_register_out_wire[0];
 
 endmodule
