@@ -18,7 +18,7 @@ module UART
   bit baudrate_clk/*synthesis keep*/;
   bit one_shot_send;
 
- 
+
   //---------------------clk divider-------------------------
    Clk_Divider
   #(	.Freq_in(FREQUENCY), .Freq_out(BAUDRATE))    BAUDRATE_GENERATOR
@@ -29,7 +29,7 @@ module UART
   //Output ports
   .clk_signal(baudrate_clk)
   );
-  
+
   //--------------------------------One Shot-----------------------------------
   	ONEshot					ONE_SHOT_START
 	(
@@ -53,6 +53,20 @@ module UART
     .Tx_out(Tx_out),
     .Tx_ready(Tx_ready)
     );
-	 //assign new_Rx = baudrate_clk;
+
+   //-------------------------- UART RX -------------------------------------------------
+   UART_RX
+   #(.WORD_LENGHT(WORD_LENGHT),
+    .FREQUENCY(FREQUENCY),
+    .BAUDRATE(BAUDRATE) ) RECEPTION
+   (
+     //inputs
+     .clk(baudrate_clk),
+     .rst(rst),
+     .RX_in(Rx_in),
+     //outputs
+     .RX_out(Rx_out),
+     .received(new_Rx)
+     );
 
 endmodule

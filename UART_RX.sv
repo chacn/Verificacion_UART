@@ -6,11 +6,8 @@ module UART_RX
   input clk,
   input rst,
   input RX_in,
-  input [WORD_LENGHT-1:0] TX_in,
-  input send,
   //outputs
   output [WORD_LENGHT-1:0]RX_out,
-  output TX_out,
   output received
   );
 
@@ -24,24 +21,13 @@ module UART_RX
   bit [CeilLog2(WORD_LENGHT+1)-1:0] RX_count_wire;
   //-----------------RX shift register wires----------------
   bit RX_shift_register_enable_wire;
-  bit [WORD_LENGHT+1:0]RX_shift_register_out_wire;
-
-//---------------------clk divider-------------------------
- Clk_Divider
-#(	.Freq_in(FREQUENCY), .Freq_out(BAUDRATE))    BAUDRATE_GENERATOR
-(
-  //Input ports
-  .clk_FPGA(clk),
-  .reset(rst),
-  //Output ports
-  .clk_signal(baudrate_clk)
-  );
+  bit [WORD_LENGHT+2:0]RX_shift_register_out_wire;
 
 //---------------------Sincronizer-------------------
   syncronizer     SYNCH
   (
     .asynch(RX_in),
-    .clk(baudrate_clk),
+    .clk(clk),
     .rst(rst),
     .synch(synch_RX)
     );
@@ -52,7 +38,7 @@ CounterParameter
 #(.Maximum_Value(WORD_LENGHT+1))      RX_COUNTER
 (
 	// Input Ports
-	.clk(baudrate_clk),
+	.clk(clk),
 	.reset(rst),
 	.enable(RX_counter_enable_wire),
 	.SyncReset(1'b0),
@@ -64,10 +50,10 @@ CounterParameter
 //----------------RX register--------------------
 assign RX_shift_register_enable_wire = |RX_count_wire;    //Only counts when counter!=0
 Register
- #(.Word_Length(WORD_LENGHT+1))     RX_REGISTER
+ #(.Word_Length(WORD_LENGHT+3))     RX_REGISTER
  (
    // Input Ports
-   .clk(baudrate_clk),
+   .clk(clk),
    .reset(rst),
    .Data_Input( {synch_RX, RX_shift_register_out_wire[WORD_LENGHT:1]} ),
    .enable(RX_shift_register_enable_wire),
@@ -78,7 +64,8 @@ Register
 
 
 //----------------------------Output signals--------------------------------
-//assign received = 
+assign received = RX_flag_wire;
+assign RX_out = RX_shift_register_out_wire[WORD_LENGHT:1];
 
 
-  endmodule
+ endmodule
