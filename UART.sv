@@ -1,6 +1,6 @@
 import Definitions ::*;
 module UART
-#(parameter WORD_LENGHT = 8, FREQUENCY = 50000000, BAUDRATE = 110 )
+#(parameter WORD_LENGHT = 8, FREQUENCY = 50000000, BAUDRATE = 9600 )
 (
   //inputs
   input clk,
@@ -54,17 +54,5 @@ module UART
     .Tx_ready(Tx_ready)
     );
 	 //assign new_Rx = baudrate_clk;
-	 
-	 
-	   //---------------------temporal clk divider for signalTap-------------------------
-   Clk_Divider
-  #(	.Freq_in(FREQUENCY), .Freq_out(BAUDRATE*4))    BAUDRATE_GENERATOR_TEMP
-  (
-  //Input ports
-  .clk_FPGA(clk),
-  .reset(rst),
-  //Output ports
-  .clk_signal(new_Rx)
-  );
 
 endmodule
