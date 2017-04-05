@@ -4,10 +4,12 @@ module UART_RX_TB;
   reg clk = 0;
   reg reset = 1;
   reg send = 0;
-  reg value;
+  reg value=1;
+
+  bit [7:0]numero = 8'b1101_1011;
 
 UART_RX
-#(.WORD_LENGHT(WORD_LENGHT), .FREQUENCY(10), .BAUDRATE (1) ) DUT
+#(.WORD_LENGHT(WORD_LENGHT)) DUT
 (
   //inputs
   .clk(clk),
@@ -15,7 +17,8 @@ UART_RX
   .RX_in(value),
   //outputs
   .RX_out(),
-  .received()
+  .received(),
+  .Rx_error()
   );
 
   /*********************************************************/
@@ -30,19 +33,23 @@ UART_RX
   	#4 reset = 1;
   end
 
-
-  initial begin
-    #12 value = "d";
-        send = 1;
-  end
-
   initial // Clock generator
     begin
     #60
       forever begin
-      #50 value = value + 15;
+      #4 value = 0;
+      #4  value = numero[0];
+      #4  value = numero[1];
+      #4  value = numero[2];
+      #4  value = numero[3];
+      #4  value = numero[4];
+      #4  value = numero[5];
+      #4  value = numero[6];
+      #4  value = numero[7];
+      #4 value = ~^numero;
+      #4 value = 1;
+
       end
     end
 
 endmodule
-

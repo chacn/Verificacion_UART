@@ -1,7 +1,7 @@
 module Clk_Divider
 #(
 	parameter Freq_in = 50000000, Freq_out = 100
-
+	
 )
 (
 //Input ports
@@ -22,27 +22,27 @@ begin
 
 	if (reset == 1'b0)
 		counter_reg <= 1'b0;
-
+	
 	else begin
 
 		if(counter_reg == frequency-1)
 			counter_reg <= 1'b0;
 		else
 			counter_reg <= counter_reg + 1;
-
+	
 	end
 
 end
 
-always_comb
+always_comb 
 begin
-
+		
 		if(counter_reg < frequency/2)
 			clk_signal_wire = 1;
-
+		
 		else
 			clk_signal_wire = 0;
-
+		
 
 end
 
@@ -60,4 +60,4 @@ assign clk_signal = clk_signal_wire;
     endfunction
 
 
-endmodule
+endmodule 

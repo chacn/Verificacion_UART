@@ -12,10 +12,12 @@ module UART
   output [WORD_LENGHT-1:0]Rx_out,
   output Tx_out,
   output new_Rx,
-  output Tx_ready
+  output Rx_error,
+  output Tx_ready,
+  output test
   );
   //--------------------------------Wires--------------------------------------
-  bit baudrate_clk/*synthesis keep*/;
+  bit baudrate_clk;
   bit one_shot_send;
 
 
@@ -56,9 +58,7 @@ module UART
 
    //-------------------------- UART RX -------------------------------------------------
    UART_RX
-   #(.WORD_LENGHT(WORD_LENGHT),
-    .FREQUENCY(FREQUENCY),
-    .BAUDRATE(BAUDRATE) ) RECEPTION
+   #(.WORD_LENGHT(WORD_LENGHT)) RECEPTION
    (
      //inputs
      .clk(baudrate_clk),
@@ -66,7 +66,9 @@ module UART
      .RX_in(Rx_in),
      //outputs
      .RX_out(Rx_out),
-     .received(new_Rx)
+     .received(new_Rx),
+	  .Rx_error(Rx_error)
      );
+	  assign test = baudrate_clk;
 
 endmodule

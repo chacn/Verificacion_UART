@@ -1,6 +1,6 @@
 import Definitions ::*;
 module UART_RX
-#(parameter WORD_LENGHT = 8, FREQUENCY = 50000000, BAUDRATE = 9600 )
+#(parameter WORD_LENGHT = 8)
 (
   //inputs
   input clk,
@@ -8,7 +8,8 @@ module UART_RX
   input RX_in,
   //outputs
   output [WORD_LENGHT-1:0]RX_out,
-  output received
+  output received,
+  output Rx_error
   );
 
 //------------------frequency div wires----------------------
@@ -18,10 +19,12 @@ module UART_RX
   //-----------------RX counter wires------------------------
   bit RX_counter_enable_wire;
   bit RX_flag_wire;
-  bit [CeilLog2(WORD_LENGHT+1)-1:0] RX_count_wire;
+  bit [CeilLog2(WORD_LENGHT+2)-1:0] RX_count_wire;
   //-----------------RX shift register wires----------------
   bit RX_shift_register_enable_wire;
-  bit [WORD_LENGHT+2:0]RX_shift_register_out_wire;
+  bit [WORD_LENGHT+1:0]RX_shift_register_out_wire;
+  //-------------------Parity wire-------------------------
+  bit parity_wire;
 
 //---------------------Sincronizer-------------------
   syncronizer     SYNCH
@@ -35,13 +38,13 @@ module UART_RX
 //-----------------RX counter---------------------------
 assign RX_counter_enable_wire = RX_shift_register_enable_wire | ~synch_RX;
 CounterParameter
-#(.Maximum_Value(WORD_LENGHT+1))      RX_COUNTER
+#(.Maximum_Value(WORD_LENGHT+2))      RX_COUNTER
 (
 	// Input Ports
 	.clk(clk),
 	.reset(rst),
 	.enable(RX_counter_enable_wire),
-	.SyncReset(1'b0),
+	.SyncReset(RX_flag_wire),
 	// Output Ports
 	.Flag(RX_flag_wire),
 	.Counting(RX_count_wire)
@@ -50,22 +53,25 @@ CounterParameter
 //----------------RX register--------------------
 assign RX_shift_register_enable_wire = |RX_count_wire;    //Only counts when counter!=0
 Register
- #(.Word_Length(WORD_LENGHT+3))     RX_REGISTER
+ #(.Word_Length(WORD_LENGHT+1))     RX_REGISTER
  (
    // Input Ports
    .clk(clk),
    .reset(rst),
    .Data_Input( {synch_RX, RX_shift_register_out_wire[WORD_LENGHT:1]} ),
    .enable(RX_shift_register_enable_wire),
-   .sync_reset(RX_counter_enable_wire),
+   .sync_reset(1'b0),
    // Output Ports
    .Data_Output(RX_shift_register_out_wire)
  );
 
 
+assign parity_wire = ^{synch_RX, RX_shift_register_out_wire[WORD_LENGHT:1]};
+
 //----------------------------Output signals--------------------------------
-assign received = RX_flag_wire;
-assign RX_out = RX_shift_register_out_wire[WORD_LENGHT:1];
+assign received = RX_flag_wire & ~parity_wire;
+assign RX_out = RX_shift_register_out_wire[WORD_LENGHT-1:0];
+assign Rx_error = parity_wire & RX_flag_wire;
 
 
  endmodule

@@ -1,3 +1,3 @@
-vsim work.UART_TB
-do wave.do
-run 100
+vsim work.UART_RX_TB
+do wave_RX.do
+run 200
