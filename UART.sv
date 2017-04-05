@@ -8,6 +8,7 @@ module UART
   input Rx_in,
   input [WORD_LENGHT-1:0] Tx_in,
   input send,
+  input clear_interrupt,
   //outputs
   output [WORD_LENGHT-1:0]Rx_out,
   output Tx_out,
@@ -64,6 +65,7 @@ module UART
      .clk(baudrate_clk),
      .rst(rst),
      .RX_in(Rx_in),
+     .clear_interrupt(clear_interrupt),
      //outputs
      .RX_out(Rx_out),
      .received(new_Rx),

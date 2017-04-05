@@ -6,6 +6,7 @@ module UART_RX
   input clk,
   input rst,
   input RX_in,
+  input clear_interrupt,
   //outputs
   output [WORD_LENGHT-1:0]RX_out,
   output received,
@@ -25,6 +26,9 @@ module UART_RX
   bit [WORD_LENGHT+1:0]RX_shift_register_out_wire;
   //-------------------Parity wire-------------------------
   bit parity_wire;
+  //---------------------Interruption wires----------------
+  bit received_out_wire;
+  bit received_wire;
 
 //---------------------Sincronizer-------------------
   syncronizer     SYNCH
@@ -65,11 +69,26 @@ Register
    .Data_Output(RX_shift_register_out_wire)
  );
 
+ //----------------Interruption register--------------------
+ assign received_wire = RX_flag_wire & ~parity_wire;
+ Register
+  #(.Word_Length(1))     INTERRUPT_REGISTER
+  (
+    // Input Ports
+    .clk(clk),
+    .reset(rst),
+    .Data_Input(received_wire),
+    .enable(RX_flag_wire),
+    .sync_reset(clear_interrupt),
+    // Output Ports
+    .Data_Output(received_out_wire)
+  );
+
 
 assign parity_wire = ^{synch_RX, RX_shift_register_out_wire[WORD_LENGHT:1]};
 
 //----------------------------Output signals--------------------------------
-assign received = RX_flag_wire & ~parity_wire;
+assign received = received_out_wire;
 assign RX_out = RX_shift_register_out_wire[WORD_LENGHT-1:0];
 assign Rx_error = parity_wire & RX_flag_wire;
 
